@@ -7,25 +7,25 @@ getChar(void)
 
 	char	c;
 
-	/* ¸½ºß¤ÎÀßÄê¤òÆÀ¤ë */
+	/* ç¾åœ¨ã®è¨­å®šã‚’å¾—ã‚‹ */
 	ioctl(0, TCGETA, &old_term);
 
-	/* ÀßÄê¤Î¥³¥Ô¡¼¤ò¤Ä¤¯¤ë */
+	/* è¨­å®šã®ã‚³ãƒ”ãƒ¼ã‚’ã¤ãã‚‹ */
 	new_term = old_term;
 
-	/* ÆþÎÏÊ¸»ú¤Î¥¨¥³¡¼¤òÍÞ»ß¤¹¤ë¾ì¹ç */
+	/* å…¥åŠ›æ–‡å­—ã®ã‚¨ã‚³ãƒ¼ã‚’æŠ‘æ­¢ã™ã‚‹å ´åˆ */
 	new_term.c_lflag &= ~(ICANON | ECHO);
 
-	/* ¥¨¥³¡¼¤Ï»ß¤á¤Ê¤¤¾ì¹ç */
+	/* ã‚¨ã‚³ãƒ¼ã¯æ­¢ã‚ãªã„å ´åˆ */
 	//new_term.c_lflag &= ~(ICANON);
 
-	/* ¿·¤·¤¤ÀßÄê¤òÈ¿±Ç¤¹¤ë */
+	/* æ–°ã—ã„è¨­å®šã‚’åæ˜ ã™ã‚‹ */
 	ioctl(0, TCSETAW, &new_term);
 
-	/* 1 Ê¸»úÆþÎÏ */
+	/* 1 æ–‡å­—å…¥åŠ› */
 	c = getchar();
 
-	/* ¸Å¤¤ÀßÄê¤ËÌá¤¹ */
+	/* å¤ã„è¨­å®šã«æˆ»ã™ */
 	ioctl(0, TCSETAW, &old_term);
 
 	return (c);
