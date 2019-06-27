@@ -1,4 +1,4 @@
-robots: robots.o
+robots: robots.o getchar.o
 	gcc -o $@ $^
 
 %.o : %.c

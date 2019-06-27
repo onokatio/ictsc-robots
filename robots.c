@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+extern char getChar(void);
+
 #define fieldX 60
 #define fieldY 20
 
@@ -44,17 +46,35 @@ void draw(){
 	printf("+\n");
 }
 
-void input(){
-
+int input(){
+	char key = getChar();
+	if(key == 'a'){
+		printf("%c",key);
+		return 1;
+	}
+	return 0;
 }
 
 void calc(){
 }
 
 void play(){
-	while(1){
-		draw();
-		input();
+	int exitflag = 0;
+	int i;
+	int j;
+	int vram[fieldX][fieldY];
+	int vram_old[fieldX][fieldY];
+
+	for(i=0;i<fieldX;i++){
+		for(j=0;j<fieldY;j++){
+			vram[i][j] = ' ';
+		}
+	}
+
+	draw(vram,vram_old);
+
+	while(!exitflag){
+		exitflag = input();
 		calc();
 	}
 }

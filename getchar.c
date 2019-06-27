@@ -1,4 +1,5 @@
 #include	<termio.h>
+#include	<stdio.h>
 
 char
 getChar(void)
