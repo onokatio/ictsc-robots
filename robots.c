@@ -6,7 +6,7 @@ extern char getChar(void);
 
 #define fieldX 60
 #define fieldY 20
-#define ROBOTNUM 4
+#define ROBOTNUM 40
 
 struct Robot_single{
 	int x;
@@ -37,7 +37,7 @@ void Robots_Updatexy(struct Robots *robots, int num, int x, int y){
 	robots->RobotField[x][y]++;
 }
 
-void draw(struct Robots *robots,struct Player *player){
+void draw(struct Robots *robots,struct Player *player, int *robotnum){
 	int i;
 	int j;
 	int vram[fieldX][fieldY];
@@ -65,7 +65,7 @@ void draw(struct Robots *robots,struct Player *player){
 	}
 	*/
 
-	for(i=0;i<ROBOTNUM;i++){
+	for(i=0;i<*robotnum;i++){
 		if(! robots->ScrapField[robots->array[i].x][robots->array[i].y]){
 			vram[robots->array[i].x][robots->array[i].y] = '+';
 		}else{
@@ -76,7 +76,7 @@ void draw(struct Robots *robots,struct Player *player){
 	vram[player->x][player->y] = '@';
 
 	printf("\033[2J");
-	printf("+");
+	printf("\n+");
 	for(i=0;i<fieldX;i++){
 		printf("-");
 	}
@@ -155,8 +155,8 @@ void move_player(char key, struct Robots *robots,struct Player *player){
 	return;
 }
 
-void update_robots(struct Robots *robots,struct Player *player){
-	for(int i=0;i<ROBOTNUM;i++){
+void update_robots(struct Robots *robots,struct Player *player,int *level, int *score,int *robotnum){
+	for(int i=0;i<*robotnum;i++){
 		if(robots->ScrapField[robots->array[i].x][robots->array[i].y] == 1) continue;
 		if(robots->array[i].x != player->x){
 
@@ -177,7 +177,7 @@ void update_robots(struct Robots *robots,struct Player *player){
 
 		}
 		if(robots->array[i].x == player->x && robots->array[i].y == player->y){
-			draw(robots,player);
+			draw(robots,player,robotnum);
 			printf("Game Over");
 			exit(0);
 		}
@@ -185,7 +185,7 @@ void update_robots(struct Robots *robots,struct Player *player){
 	for(int y=0; y < fieldY ; y++){
 		for(int x=0; x < fieldX ; x++){
 			if(robots->RobotField[x][y] >= 2 || ( robots->RobotField[x][y] >= 1 && robots->ScrapField[x][y] == 1) ){
-				printf("atari hantei (%d %d) field=%d scrap=%d \n",x,y,robots->RobotField[x][y],robots->ScrapField[x][y]);
+				*score += robots->RobotField[x][y];
 				robots->ScrapField[x][y] = 1;
 				robots->RobotField[x][y] = 0;
 			}
@@ -194,7 +194,7 @@ void update_robots(struct Robots *robots,struct Player *player){
 
 }
 
-int calc(char key,struct Robots *robots,struct Player *player){
+int calc(char key,struct Robots *robots,struct Player *player,int *level, int *score,int *robotnum){
 	switch(key){
 		case 'h':
 		case 'l':
@@ -206,10 +206,8 @@ int calc(char key,struct Robots *robots,struct Player *player){
 		case 'm':
 		case '0':
 			move_player(key,robots,player);
-			update_robots(robots,player);
-			break;
 		case '5':
-			update_robots(robots,player);
+			update_robots(robots,player,level,score,robotnum);
 			break;
 		default:
 			break;
@@ -218,8 +216,8 @@ int calc(char key,struct Robots *robots,struct Player *player){
 	return 0;
 }
 
-void init_robots(struct Robots *robots){
-	for(int num=0;num<ROBOTNUM;num++){
+void init_robots(struct Robots *robots,int *robotnum){
+	for(int num=0;num<*robotnum;num++){
 		do {
 			robots->array[num].x = rand()%fieldX;
 			robots->array[num].y = rand()%fieldY;
@@ -234,22 +232,37 @@ void init_player(struct Player *player){
 	player->y = rand()%fieldY;
 }
 
-void play(){
+void play(int *level, int *score){
 	int exitflag = 0;
 	struct Robots robots = {};
 	struct Player player = {};
 	char key;
+	int tmp = 0;
+	int sum;
 
-	init_robots(&robots);
+	int robotnum = *level * 5;
+	if(robotnum > 40) robotnum = 40;
+
+	init_robots(&robots,&robotnum);
 	init_player(&player);
 
-	draw(&robots,&player);
+	draw(&robots,&player,&robotnum);
 
 	while(!exitflag){
+		printf("\n(level:%d score:%d):?", *level, *score);
 		key = getChar();
 		//printf("%c\n",key);
-		calc(key,&robots,&player);
-		draw(&robots,&player);
+		calc(key,&robots,&player,level,score,&robotnum);
+		draw(&robots,&player,&robotnum);
+
+		while(tmp < *level ){
+			sum += *level;
+			tmp++;
+		}
+		if(*score >= 15*tmp){
+			break;
+			*score += *level * 10;
+		}
 	}
 }
 
@@ -268,5 +281,12 @@ void init(int array[fieldX][fieldY]){
 int main(void){
 
 	srand((unsigned)time(NULL));
-	play();
+
+	int level = 1;
+	int score = 0;
+
+	while(1){
+		play(&level,&score);
+		level++;
+	}
 }
