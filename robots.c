@@ -68,16 +68,75 @@ void draw(struct Robots *robots,struct Player *player){
 	printf("+\n");
 }
 
-int input(){
-	char key = getChar();
-	if(key == 'a'){
-		printf("%c",key);
-		return 1;
+void move_player(char key, struct Player *player, struct Robots *robots){
+	switch(key){
+		case 'h':
+			robots->RobotField[player->x -1][player->y] || player->x--;
+			break;
+		case 'l':
+			robots->RobotField[player->x +1][player->y] || player->x++;
+			break;
+		case 'j':
+			robots->RobotField[player->x][player->y +1] || player->y++;
+			break;
+		case 'k':
+			robots->RobotField[player->x][player->y -1] || player->y--;
+			break;
+		case 'u':
+			if(! robots->RobotField[player->x -1][player->y -1]){
+				player->x--;
+				player->y--;
+			}
+			break;
+		case 'i':
+			if(! robots->RobotField[player->x +1][player->y -1]){
+				player->x++;
+				player->y--;
+			}
+			break;
+		case 'n':
+			if(! robots->RobotField[player->x -1][player->y +1]){
+				player->x--;
+				player->y++;
+			}
+			break;
+		case 'm':
+			if(! robots->RobotField[player->x +1][player->y +1]){
+				player->x++;
+				player->y++;
+			}
+			break;
+		case '0':
+			int randx = rand()%fieldX;
+			int randy = rand()%fieldY;
+			if(! robots->RobotField[randx][randy]){
+				player->x++;
+				player->y++;
+			}
+			break;
 	}
-	return 0;
 }
 
-void calc(){
+int calc(char key,struct Player *player, struct Robots *robots){
+	switch(key){
+		case 'h':
+		case 'l':
+		case 'j':
+		case 'k':
+		case 'u':
+		case 'i':
+		case 'n':
+		case 'm':
+			move_player();
+			update_robots();
+			break;
+		case '0':
+			teleport();
+			update_robots();
+			break;
+
+	}
+	return 0;
 }
 
 void init_robot(struct Robots *robots){
@@ -95,6 +154,8 @@ void play(){
 	int exitflag = 0;
 	struct Robots robots = {};
 	struct Player player = {};
+	int request_reload = 0;
+	char key;
 
 	init_robot(&robots);
 	init_player(&player);
@@ -102,8 +163,8 @@ void play(){
 	draw(&robots,&player);
 
 	while(!exitflag){
-		exitflag = input();
-		calc();
+		key = getChar();
+		calc(key);
 	}
 }
 
