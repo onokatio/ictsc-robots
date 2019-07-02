@@ -11,14 +11,12 @@ extern char getChar(void);
 struct Robot_single{
 	int x;
 	int y;
-	//int isDead;
 };
 
 struct Robots{
 	struct Robot_single array[ROBOTNUM];
 	int RobotField[fieldX][fieldY];
 	int ScrapField[fieldX][fieldY];
-	//struct Robot_single *RobotField_Pointer[fieldX][fieldY][ROBOTNUM];
 };
 
 struct Player{
@@ -109,36 +107,44 @@ void teleport_player(struct Robots *robots, struct Player *player){
 void move_player(char key, struct Robots *robots,struct Player *player){
 	switch(key){
 		case 'h':
+		case '4':
 			if(! robots->RobotField[player->x -1][player->y]) player->x--;
 			break;
 		case 'l':
+		case '6':
 			if(! robots->RobotField[player->x +1][player->y]) player->x++;
 			break;
 		case 'j':
+		case '2':
 			if(! robots->RobotField[player->x][player->y +1]) player->y++;
 			break;
 		case 'k':
+		case '8':
 			if(! robots->RobotField[player->x][player->y -1]) player->y--;
 			break;
 		case 'u':
+		case '7':
 			if(! robots->RobotField[player->x -1][player->y -1]){
 				player->x--;
 				player->y--;
 			}
 			break;
 		case 'i':
+		case '9':
 			if(! robots->RobotField[player->x +1][player->y -1]){
 				player->x++;
 				player->y--;
 			}
 			break;
 		case 'n':
+		case '1':
 			if(! robots->RobotField[player->x -1][player->y +1]){
 				player->x--;
 				player->y++;
 			}
 			break;
 		case 'm':
+		case '3':
 			if(! robots->RobotField[player->x +1][player->y +1]){
 				player->x++;
 				player->y++;
@@ -205,6 +211,14 @@ int calc(char key,struct Robots *robots,struct Player *player,int *level, int *s
 		case 'n':
 		case 'm':
 		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
 			move_player(key,robots,player);
 		case '5':
 			update_robots(robots,player,level,score,robotnum);
@@ -252,7 +266,6 @@ void play(int *level, int *score){
 	while(!exitflag){
 		printf("\n(level:%d score:%d):?", *level, *score);
 		key = getChar();
-		//printf("%c\n",key);
 		calc(key,&robots,&player,level,score,&robotnum);
 		draw(&robots,&player,&robotnum);
 
@@ -262,18 +275,6 @@ void play(int *level, int *score){
 			break;
 		}
 	}
-}
-
-void init(int array[fieldX][fieldY]){
-	int i;
-	int j;
-
-	for(i=0;i<fieldX;i++){
-		for(j=0;j<fieldY;j++){
-			array[i][j] = 0;
-		}
-	}
-	
 }
 
 int main(void){
