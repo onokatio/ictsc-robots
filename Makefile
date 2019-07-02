@@ -3,3 +3,6 @@ robots: robots.o getchar.o
 
 %.o : %.c
 	gcc -c -Wall -O2 -o $@ $<
+
+clean:
+	rm -f *.o
