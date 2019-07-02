@@ -184,7 +184,7 @@ void update_robots(struct Robots *robots,struct Player *player,int *level, int *
 		}
 		if(robots->array[i].x == player->x && robots->array[i].y == player->y){
 			draw(robots,player,robotnum);
-			printf("Game Over");
+			printf("Game Over\n");
 			exit(0);
 		}
 	}
