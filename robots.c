@@ -157,7 +157,7 @@ void update_robots(struct Robots *robots,struct Player *player){
 		if(robots->ScrapField[robots->array[i].x][robots->array[i].y] == 1) continue;
 		if(robots->array[i].x != player->x){
 
-			robots->RobotField[robots->array[i].x][robots->array[i].y]=0;
+			//robots->RobotField[robots->array[i].x][robots->array[i].y]--;
 
 			if(robots->array[i].x < player->x){
 				Robots_Updatexy(robots,i,robots->array[i].x+1,robots->array[i].y);
@@ -165,12 +165,12 @@ void update_robots(struct Robots *robots,struct Player *player){
 				Robots_Updatexy(robots,i,robots->array[i].x-1,robots->array[i].y);
 			}
 
-			robots->RobotField[robots->array[i].x][robots->array[i].y]++;
+			//robots->RobotField[robots->array[i].x][robots->array[i].y]++;
 
 		}
 		if(robots->array[i].y != player->y){
 
-			robots->RobotField[robots->array[i].x][robots->array[i].y]=0;
+			//robots->RobotField[robots->array[i].x][robots->array[i].y]--;
 
 			if(robots->array[i].y < player->y){
 				Robots_Updatexy(robots,i,robots->array[i].x,robots->array[i].y+1);
@@ -178,7 +178,7 @@ void update_robots(struct Robots *robots,struct Player *player){
 				Robots_Updatexy(robots,i,robots->array[i].x,robots->array[i].y-1);
 			}
 
-			robots->RobotField[robots->array[i].x][robots->array[i].y]++;
+			//robots->RobotField[robots->array[i].x][robots->array[i].y]++;
 
 		}
 		if(robots->array[i].x == player->x && robots->array[i].y == player->y){
