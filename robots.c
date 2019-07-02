@@ -237,11 +237,12 @@ void play(int *level, int *score){
 	struct Robots robots = {};
 	struct Player player = {};
 	char key;
-	int tmp = 0;
-	int sum;
+	int target = 0;
 
 	int robotnum = *level * 5;
 	if(robotnum > 40) robotnum = 40;
+
+	target = *score + *level*5;
 
 	init_robots(&robots,&robotnum);
 	init_player(&player);
@@ -255,13 +256,10 @@ void play(int *level, int *score){
 		calc(key,&robots,&player,level,score,&robotnum);
 		draw(&robots,&player,&robotnum);
 
-		while(tmp < *level ){
-			sum += *level;
-			tmp++;
-		}
-		if(*score >= 15*tmp){
-			break;
+		printf("targe = %d\n",target);
+		if(*score >= target){
 			*score += *level * 10;
+			break;
 		}
 	}
 }
