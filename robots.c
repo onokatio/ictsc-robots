@@ -30,7 +30,7 @@ void Robots_Setxy(struct Robots *robots, int num, int x, int y){
 	robots->RobotField[x][y] = 1;
 }
 
-void draw(struct Robots *robots,struct Player player){
+void draw(struct Robots *robots,struct Player *player){
 	int i;
 	int j;
 	int vram[fieldX][fieldY];
@@ -45,8 +45,9 @@ void draw(struct Robots *robots,struct Player player){
 
 	for(i=0;i<ROBOTNUM;i++){
 		vram[robots->array[i].x][robots->array[i].y] = '+';
-		printf("%d %d \n",robots->array[i].x,robots->array[i].y);
 	}
+
+	vram[player->x][player->y] = '@';
 
 	printf("+");
 	for(i=0;i<fieldX;i++){
@@ -85,14 +86,20 @@ void init_robot(struct Robots *robots){
 	}
 }
 
+void init_player(struct Player *player){
+	player->x = rand()%fieldX;
+	player->y = rand()%fieldY;
+}
+
 void play(){
 	int exitflag = 0;
 	struct Robots robots = {};
 	struct Player player = {};
 
 	init_robot(&robots);
+	init_player(&player);
 
-	draw(&robots,player);
+	draw(&robots,&player);
 
 	while(!exitflag){
 		exitflag = input();
