@@ -27,10 +27,7 @@ struct Player{
 };
 
 
-void Robots_Setxy(struct Robots *robots, int num, int x, int y){
-	//int i = 0;
-	//while(robots->RobotField_Pointer[x][y][i] != NULL) i++;
-	//robots->RobotField_Pointer[x][y][i-1] = NULL;
+void Robots_Updatexy(struct Robots *robots, int num, int x, int y){
 
 	robots->RobotField[robots->array[num].x][robots->array[num].y]--;
 
@@ -38,10 +35,6 @@ void Robots_Setxy(struct Robots *robots, int num, int x, int y){
 	robots->array[num].y = y;
 
 	robots->RobotField[x][y]++;
-
-	//i = 0;
-	//while(robots->RobotField_Pointer[x][y][i] != NULL) i++;
-	//robots->RobotField_Pointer[x][y][i] = &(robots->array[num]);
 }
 
 void draw(struct Robots *robots,struct Player *player){
@@ -167,9 +160,9 @@ void update_robots(struct Robots *robots,struct Player *player){
 			robots->RobotField[robots->array[i].x][robots->array[i].y]=0;
 
 			if(robots->array[i].x < player->x){
-				Robots_Setxy(robots,i,robots->array[i].x+1,robots->array[i].y);
+				Robots_Updatexy(robots,i,robots->array[i].x+1,robots->array[i].y);
 			}else{
-				Robots_Setxy(robots,i,robots->array[i].x-1,robots->array[i].y);
+				Robots_Updatexy(robots,i,robots->array[i].x-1,robots->array[i].y);
 			}
 
 			robots->RobotField[robots->array[i].x][robots->array[i].y]++;
@@ -180,9 +173,9 @@ void update_robots(struct Robots *robots,struct Player *player){
 			robots->RobotField[robots->array[i].x][robots->array[i].y]=0;
 
 			if(robots->array[i].y < player->y){
-				Robots_Setxy(robots,i,robots->array[i].x,robots->array[i].y+1);
+				Robots_Updatexy(robots,i,robots->array[i].x,robots->array[i].y+1);
 			}else{
-				Robots_Setxy(robots,i,robots->array[i].x,robots->array[i].y-1);
+				Robots_Updatexy(robots,i,robots->array[i].x,robots->array[i].y-1);
 			}
 
 			robots->RobotField[robots->array[i].x][robots->array[i].y]++;
@@ -231,9 +224,13 @@ int calc(char key,struct Robots *robots,struct Player *player){
 }
 
 void init_robots(struct Robots *robots){
-	for(int i=0;i<ROBOTNUM;i++){
-		Robots_Setxy(robots, i, rand()%fieldX, rand()%fieldY);
-		//robots->array[i].isDead = 0;
+	for(int num=0;num<ROBOTNUM;num++){
+		do {
+			robots->array[num].x = rand()%fieldX;
+			robots->array[num].y = rand()%fieldY;
+		} while( robots->RobotField[robots->array[num].x][robots->array[num].y] == 1);
+
+		robots->RobotField[robots->array[num].x][robots->array[num].y] = 1;
 	}
 }
 
