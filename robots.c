@@ -11,14 +11,14 @@ extern char getChar(void);
 struct Robot_single{
 	int x;
 	int y;
-	int isDead;
+	//int isDead;
 };
 
 struct Robots{
 	struct Robot_single array[ROBOTNUM];
 	int RobotField[fieldX][fieldY];
 	int ScrapField[fieldX][fieldY];
-	struct Robot_single *RobotField_Pointer[fieldX][fieldY][ROBOTNUM];
+	//struct Robot_single *RobotField_Pointer[fieldX][fieldY][ROBOTNUM];
 };
 
 struct Player{
@@ -28,10 +28,20 @@ struct Player{
 
 
 void Robots_Setxy(struct Robots *robots, int num, int x, int y){
-	//struct Robot_single *RobotField_Pointer[fieldX][fieldY][ROBOTNUM];
+	//int i = 0;
+	//while(robots->RobotField_Pointer[x][y][i] != NULL) i++;
+	//robots->RobotField_Pointer[x][y][i-1] = NULL;
+
+	robots->RobotField[robots->array[num].x][robots->array[num].y]--;
+
 	robots->array[num].x = x;
 	robots->array[num].y = y;
-	robots->RobotField[x][y] = 1;
+
+	robots->RobotField[x][y]++;
+
+	//i = 0;
+	//while(robots->RobotField_Pointer[x][y][i] != NULL) i++;
+	//robots->RobotField_Pointer[x][y][i] = &(robots->array[num]);
 }
 
 void draw(struct Robots *robots,struct Player *player){
@@ -46,8 +56,26 @@ void draw(struct Robots *robots,struct Player *player){
 		}
 	}
 
+	for(j=0;j<fieldY;j++){
+		for(i=0;i<fieldX;i++){
+			printf("%d", robots->ScrapField[i][j]);
+		}
+		printf("\n");
+	}
+		printf("\n");
+	for(j=0;j<fieldY;j++){
+		for(i=0;i<fieldX;i++){
+			printf("%d", robots->RobotField[i][j]);
+		}
+		printf("\n");
+	}
+
 	for(i=0;i<ROBOTNUM;i++){
-		if(! robots->array[i].isDead){ vram[robots->array[i].x][robots->array[i].y] = '+'; };
+		if(! robots->ScrapField[robots->array[i].x][robots->array[i].y]){
+			vram[robots->array[i].x][robots->array[i].y] = '+';
+		}else{
+			vram[robots->array[i].x][robots->array[i].y] = '*';
+		};
 	}
 
 	vram[player->x][player->y] = '@';
@@ -133,14 +161,15 @@ void move_player(char key, struct Robots *robots,struct Player *player){
 
 void update_robots(struct Robots *robots,struct Player *player){
 	for(int i=0;i<ROBOTNUM;i++){
+		if(robots->ScrapField[robots->array[i].x][robots->array[i].y] == 1) continue;
 		if(robots->array[i].x != player->x){
 
-			robots->RobotField[robots->array[i].x][robots->array[i].y]--;
+			robots->RobotField[robots->array[i].x][robots->array[i].y]=0;
 
 			if(robots->array[i].x < player->x){
-				robots->array[i].x++;
+				Robots_Setxy(robots,i,robots->array[i].x+1,robots->array[i].y);
 			}else{
-				robots->array[i].x--;
+				Robots_Setxy(robots,i,robots->array[i].x-1,robots->array[i].y);
 			}
 
 			robots->RobotField[robots->array[i].x][robots->array[i].y]++;
@@ -148,12 +177,12 @@ void update_robots(struct Robots *robots,struct Player *player){
 		}
 		if(robots->array[i].y != player->y){
 
-			robots->RobotField[robots->array[i].x][robots->array[i].y]--;
+			robots->RobotField[robots->array[i].x][robots->array[i].y]=0;
 
 			if(robots->array[i].y < player->y){
-				robots->array[i].y++;
+				Robots_Setxy(robots,i,robots->array[i].x,robots->array[i].y+1);
 			}else{
-				robots->array[i].y--;
+				Robots_Setxy(robots,i,robots->array[i].x,robots->array[i].y-1);
 			}
 
 			robots->RobotField[robots->array[i].x][robots->array[i].y]++;
@@ -167,7 +196,10 @@ void update_robots(struct Robots *robots,struct Player *player){
 	}
 	for(int y=0; y < fieldY ; y++){
 		for(int x=0; x < fieldX ; x++){
-			if(robots->RobotField[x][y] >= 2){
+			if(robots->RobotField[x][y] >= 2 || ( robots->RobotField[x][y] >= 1 && robots->ScrapField[x][y] == 1) ){
+				printf("atari hantei (%d %d) field=%d scrap=%d \n",x,y,robots->RobotField[x][y],robots->ScrapField[x][y]);
+				robots->ScrapField[x][y] = 1;
+				robots->RobotField[x][y] = 0;
 			}
 		}
 	}
@@ -201,6 +233,7 @@ int calc(char key,struct Robots *robots,struct Player *player){
 void init_robots(struct Robots *robots){
 	for(int i=0;i<ROBOTNUM;i++){
 		Robots_Setxy(robots, i, rand()%fieldX, rand()%fieldY);
+		//robots->array[i].isDead = 0;
 	}
 }
 
