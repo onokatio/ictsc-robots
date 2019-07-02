@@ -1,13 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 extern char getChar(void);
 
 #define fieldX 60
 #define fieldY 20
+#define ROBOTNUM 4
 
-struct Robot{
+struct Robot_single{
 	int x;
 	int y;
+};
+
+struct Robots{
+	struct Robot_single array[ROBOTNUM];
+	int RobotField[fieldX][fieldY];
 };
 
 struct Player{
@@ -16,15 +24,28 @@ struct Player{
 };
 
 
-void draw(){
+void Robots_Setxy(struct Robots *robots, int num, int x, int y){
+	robots->array[num].x = x;
+	robots->array[num].y = y;
+	robots->RobotField[x][y] = 1;
+}
+
+void draw(struct Robots *robots,struct Player player){
 	int i;
 	int j;
 	int vram[fieldX][fieldY];
+	int vram_old[fieldX][fieldY];
+
 
 	for(i=0;i<fieldX;i++){
 		for(j=0;j<fieldY;j++){
 			vram[i][j] = ' ';
 		}
+	}
+
+	for(i=0;i<ROBOTNUM;i++){
+		vram[robots->array[i].x][robots->array[i].y] = '+';
+		printf("%d %d \n",robots->array[i].x,robots->array[i].y);
 	}
 
 	printf("+");
@@ -58,20 +79,20 @@ int input(){
 void calc(){
 }
 
+void init_robot(struct Robots *robots){
+	for(int i=0;i<ROBOTNUM;i++){
+		Robots_Setxy(robots, i, rand()%fieldX, rand()%fieldY);
+	}
+}
+
 void play(){
 	int exitflag = 0;
-	int i;
-	int j;
-	int vram[fieldX][fieldY];
-	int vram_old[fieldX][fieldY];
+	struct Robots robots = {};
+	struct Player player = {};
 
-	for(i=0;i<fieldX;i++){
-		for(j=0;j<fieldY;j++){
-			vram[i][j] = ' ';
-		}
-	}
+	init_robot(&robots);
 
-	draw(vram,vram_old);
+	draw(&robots,player);
 
 	while(!exitflag){
 		exitflag = input();
@@ -93,9 +114,6 @@ void init(int array[fieldX][fieldY]){
 
 int main(void){
 
-	//int robot[fieldX][fieldY];
-	struct Robot robot[40];
-	struct Player player;
-
+	srand((unsigned)time(NULL));
 	play();
 }
