@@ -49,6 +49,7 @@ void draw(struct Robots *robots,struct Player *player){
 		}
 	}
 
+	/*
 	for(j=0;j<fieldY;j++){
 		for(i=0;i<fieldX;i++){
 			printf("%d", robots->ScrapField[i][j]);
@@ -62,6 +63,7 @@ void draw(struct Robots *robots,struct Player *player){
 		}
 		printf("\n");
 	}
+	*/
 
 	for(i=0;i<ROBOTNUM;i++){
 		if(! robots->ScrapField[robots->array[i].x][robots->array[i].y]){
@@ -73,6 +75,7 @@ void draw(struct Robots *robots,struct Player *player){
 
 	vram[player->x][player->y] = '@';
 
+	printf("\033[2J");
 	printf("+");
 	for(i=0;i<fieldX;i++){
 		printf("-");
@@ -157,28 +160,20 @@ void update_robots(struct Robots *robots,struct Player *player){
 		if(robots->ScrapField[robots->array[i].x][robots->array[i].y] == 1) continue;
 		if(robots->array[i].x != player->x){
 
-			//robots->RobotField[robots->array[i].x][robots->array[i].y]--;
-
 			if(robots->array[i].x < player->x){
 				Robots_Updatexy(robots,i,robots->array[i].x+1,robots->array[i].y);
 			}else{
 				Robots_Updatexy(robots,i,robots->array[i].x-1,robots->array[i].y);
 			}
 
-			//robots->RobotField[robots->array[i].x][robots->array[i].y]++;
-
 		}
 		if(robots->array[i].y != player->y){
-
-			//robots->RobotField[robots->array[i].x][robots->array[i].y]--;
 
 			if(robots->array[i].y < player->y){
 				Robots_Updatexy(robots,i,robots->array[i].x,robots->array[i].y+1);
 			}else{
 				Robots_Updatexy(robots,i,robots->array[i].x,robots->array[i].y-1);
 			}
-
-			//robots->RobotField[robots->array[i].x][robots->array[i].y]++;
 
 		}
 		if(robots->array[i].x == player->x && robots->array[i].y == player->y){
